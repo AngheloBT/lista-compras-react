@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react"
 import Button from "./Button"
+import { Summary } from "./Summary"
+import { SavePurchase } from "./SavePurchase"
 
 export const AddItem = ({ onAgregar }) => {
 
@@ -9,7 +11,6 @@ export const AddItem = ({ onAgregar }) => {
         try{
             const response = await fetch(`${import.meta.env.VITE_API_URL}products`)
             const data = await response.json()
-            console.log(data)
             setproducts(data)
         }catch(error){
             console.log(error)
@@ -20,6 +21,20 @@ export const AddItem = ({ onAgregar }) => {
         fetchProducts()
     }, [])
 
+    const controlStock = (product) => {
+        const listaGuardada = JSON.parse(localStorage.getItem('lista-productos')) || []
+
+        const productoGuardado = listaGuardada.find( p => p.id === product.id )
+        const cantidadActual = productoGuardado ? productoGuardado.cantidad : 0
+
+        if (cantidadActual >= product.stock) {
+            alert("Stock maximo")
+            return
+        }
+    
+        onAgregar(product)
+    }
+
     return (
         <>
             <h1 className="text-3xl font-bold p-2 text-center">Productos</h1>
@@ -28,10 +43,11 @@ export const AddItem = ({ onAgregar }) => {
                     <li key={product.id}className="border rounded-lg p-6 shadow-md bg-white flex flex-col items-start">
                         <h3 className="text-xl font-semibold mb-2">{product.name}</h3>
                         <p className="text-gray-700 mb-4 text-base">${product.price}</p>
-                        <Button onClick={() => onAgregar(product)}>Agregar</Button>
+                        <Button onClick={() => controlStock(product)}>Agregar</Button>
                     </li>
                 ))}
             </ul>
         </>
     )
 }
+

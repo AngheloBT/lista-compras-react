@@ -2,7 +2,7 @@ import Button from "./Button"
 
 export const ItemList = ({onEliminar}) => {
 
-    const products = JSON.parse(localStorage.getItem("lista-productos"))
+    const products = JSON.parse(localStorage.getItem("lista-productos")) || []
 
     return(
         <>
